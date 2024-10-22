@@ -1,0 +1,53 @@
+version: "3.3"
+services:
+  traefik:
+    image: traefik:v2.2
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    command:
+      - --api.insecure=true
+      - --api.dashboard=true
+      - --api.debug=true
+      - --log.level=DEBUG
+      - --providers.docker=true
+      - --providers.docker.swarmMode=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=traefik_external
+      - --entrypoints.web.address=:80
+      - --entrypoints.web-secured.address=:443
+#      - --providers.file.filename=/traefik.toml
+    volumes:
+      - cert:/ssl
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - backend
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.role == manager]
+#  whoami:
+#    image:
+#      containous/whoami
+#    networks:
+#      - external
+#    deploy:
+#      mode: replicated
+#      replicas: 4
+#      labels:
+#        - "traefik.enable=true"
+#        - "traefik.http.services.whoami.loadbalancer.server.port=80"
+#        - "traefik.http.routers.whoami.rule=Host(`whoami.rpulse.locnet`)"
+#        - "traefik.http.routers.whoami.entrypoints=web"
+#        - "traefik.http.routers.whoami-https.rule=Host(`whoami.rpulse.locnet`)"
+#        - "traefik.http.routers.whoami-https.entrypoints=web-secured"
+networks:
+  backend:
+    driver: overlay
+#networks:
+#  traefik-public:
+#    external:
+#      name: traefik-public
+volumes:
+  cert:
