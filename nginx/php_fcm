@@ -1,0 +1,33 @@
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/s-namestnikov-at-g-nsu-ru.devops.rebrain.srwx.net/html;
+        index index.html index.php;
+
+        server_name s-namestnikov-at-g-nsu-ru.devops.rebrain.srwx.net;
+
+#        location / {
+#                try_files $uri $uri/index.html;
+#        }
+        
+        location /go {
+                proxy_pass http://localhost:8080;
+        }
+
+        location /php {
+                try_files $uri $uri/ /index.php?$args;
+        }
+
+
+        location ~ \.php$ {
+#                fastcgi_index  index.php;
+                #index index.php
+                include snippets/fastcgi-php.conf;
+
+                # Nginx php-fpm sock config:
+                fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+                # Nginx php-cgi config :
+                # Nginx PHP fastcgi_pass 127.0.0.1:9000;
+        }
+}
