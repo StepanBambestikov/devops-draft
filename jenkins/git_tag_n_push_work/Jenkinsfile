@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = 'https://{my_login}:{my_tag}@gitlab.rebrainme.com/devops_users_repos/5890/dev02'
+        TAG_NAME = 'v0.1'
+        NEW_BRANCH = 'v0.2-rc1'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'master', url: "${REPO_URL}"
+            }
+        }
+
+        stage('Create Tag') {
+            steps {
+                script {
+                    sh "git tag ${TAG_NAME}"
+                    sh "git push origin ${TAG_NAME}"
+                }
+            }
+        }
+
+        stage('Create New Branch') {
+            steps {
+                script {
+                    sh "git checkout -b ${NEW_BRANCH}"
+                    sh "git push origin ${NEW_BRANCH}"
+                }
+            }
+        }
+    }
+}
