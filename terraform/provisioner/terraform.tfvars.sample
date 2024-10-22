@@ -1,0 +1,17 @@
+my_ssh_key="add me"
+rebrain_ssh_key="add me"
+do_token="add me"
+ttl_number=300
+domain_name="add me"
+input_domain_zone="add me"
+email_tag="add me"
+task_tag="and add me"
+aws_access_key="me too"
+aws_secret_key="same"
+my_key_name="add"
+rebrain_key_name="add!"
+module_tag="add"
+domain_prefix="add"
+domain_count="add"
+my_private_key="add"
+devs=["role-username"]
