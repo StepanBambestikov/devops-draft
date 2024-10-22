@@ -1,0 +1,54 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: DatabasePassword
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - dbnet
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      POSTGRES_URI: postgres://postgres:DatabasePassword@postgres:5432/postgres?sslmode=disable
+    depends_on:
+      - postgres
+    networks:
+      - nginxnet
+      - dbnet
+  nginx:
+    image: nginx:stable
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+    cap_drop:
+      - ALL
+    cap_add:
+      - chown
+      - dac_override
+      - setgid
+      - setuid
+      - CAP_AUDIT_WRITE
+      - net_bind_service
+      - CAP_NET_RAW
+      - NET_ADMIN
+      - SYS_ADMIN 
+      - DAC_READ_SEARCH  
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+    networks:
+      - nginxnet
+
+networks:
+  dbnet:
+  nginxnet:
