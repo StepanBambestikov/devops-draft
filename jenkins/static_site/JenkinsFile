@@ -1,0 +1,59 @@
+pipeline {
+    agent any
+    triggers{
+        cron('* * * * *')
+    }
+    
+    environment {
+        //DEPLOY_DIR = '/home/jenkins/www'
+        DEPLOY_DIR = '/var/lib/jenkins'
+        GIT_TAG = 'null'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    //checkout scm
+                    def repoUrl = 'https://{your_login}:{your_token}@gitlab.rebrainme.com/devops_users_repos/5890/do-13.git'
+                    def tagName = "${env.GIT_TAG}" // Имя тега, которое будет установлено при триггере
+    
+                        // Клонируем репозиторий с указанным тегом
+                    //sh "git clone --branch ${tagName} ${repoUrl} cloned-repo"
+                    git branch: 'main', url: "${repoUrl}"
+                    GIT_TAG=sh(returnStdout: true, script: "git tag --contains | head -1").trim()
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    
+                    echo "tag: ${GIT_TAG}"
+                    def currentDeployDir = "${DEPLOY_DIR}/${GIT_TAG}"
+                    def currentDeployDirFile = "${DEPLOY_DIR}/${GIT_TAG}/index.html"
+                    def symlinkPath = "${DEPLOY_DIR}/current"
+                    def symlinkPathFile = "${symlinkPath}/index.html"
+                    
+                    if (fileExists(symlinkPathFile) && fileExists(currentDeployDirFile)) {
+                        def lastDeployDirFile = readFile(symlinkPathFile)
+                        def currentDeployDirFileInner = readFile(currentDeployDirFile)
+                        if (lastDeployDirFile == currentDeployDirFileInner) {
+                            echo "No changes detected. Skipping deployment."
+                            return
+                        }
+                    }
+
+                    // Создание директории для новой версии
+                    sh "mkdir -p ${currentDeployDir}"
+                    sh "cp index.html ${currentDeployDir}/"
+
+                    // Обновление симлинка
+                    sh "ln -sfn ${currentDeployDir} ${symlinkPath}"
+                    echo "Deployment successful to ${currentDeployDir}"
+                }
+            }
+        }
+    }
+}
