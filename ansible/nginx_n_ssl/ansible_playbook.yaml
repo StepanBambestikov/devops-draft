@@ -1,0 +1,9 @@
+- name: Install nginx
+  hosts: all
+  roles:
+  #  - set_nginx
+  #  - role: add_nginx_ssl_certificate
+  #    domain_name: s-namestnikov-at-g-nsu-ru.devops.rebrain.srwx.net
+  #    letsencrypt_email: s.namestnikov@g.nsu.ru
+    - role: add_vhost_to_nginx
+      domain_name: s-namestnikov-at-g-nsu-ru.devops.rebrain.srwx.net
