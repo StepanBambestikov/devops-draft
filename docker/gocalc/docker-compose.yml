@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: DatabasePassword
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_URI: postgres://postgres:DatabasePassword@postgres:5432/postgres?sslmode=disable
+    depends_on:
+      - postgres
+  nginx:
+    image: nginx:stable
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+    volumes:
+     - type: bind
+       source: ./nginx.conf
+       target: /etc/nginx/nginx.conf
