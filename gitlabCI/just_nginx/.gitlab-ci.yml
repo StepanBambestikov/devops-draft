@@ -1,0 +1,44 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  - build
+  - test
+  - deploy
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: always
+
+variables:
+  DOCKER_DRIVER: overlay2
+
+build:
+  stage: build
+  script:
+    - docker build -t my-nginx-app .
+
+test:
+  stage: test
+  script:
+    - echo "doing tests..."
+    - echo "doing tests..."
+    - echo "doing tests..."
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "development"'
+
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to server..."
+    - docker stop $(docker ps -q) || true
+    - echo "Deploying to server..."
+    - docker run -p 80:80 -d my-nginx-app
+    - echo "server deployed!"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  when: manual
