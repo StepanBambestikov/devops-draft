@@ -1,0 +1,2 @@
+This role installs nginx and includes it in startup.
+This can be used for all settings that involve working with nginx
