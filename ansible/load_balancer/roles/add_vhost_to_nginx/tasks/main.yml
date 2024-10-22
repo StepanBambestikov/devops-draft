@@ -1,0 +1,33 @@
+- name: Disable the default site
+  file:
+    path: "/etc/nginx/sites-enabled/default"
+    state: absent
+  notify:
+    - Reload Nginx
+- name: Remove the default configuration
+  file:
+    path: "/etc/nginx/conf.d/default.conf"
+    state: absent
+  notify:
+    - Reload Nginx
+- name: Create host directory
+  ansible.builtin.file:
+    path: /var/www/{{  domain_name }}
+    state: directory
+    mode: "0777"
+- name: Create vhost directory
+  ansible.builtin.file:
+    path: /var/www/{{  domain_name }}/html
+    state: directory
+    mode: "0777"
+- name: Upload virtual host index file
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/{{  domain_name }}/html/index.html
+    mode: "0777"
+- name: Upload virtual host config file
+  ansible.builtin.template:
+    src: vhost.conf.j2
+    dest: /etc/nginx/conf.d/{{  domain_name }}.conf
+    mode: "0777"
+  notify: Reload Nginx

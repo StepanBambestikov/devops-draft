@@ -1,0 +1,9 @@
+all:
+  hosts:
+    balance_host:
+      ansible_host: ${droplet_ips[0]}
+      ansible_user: root
+    origin_host:
+      ansible_host: ${droplet_ips[1]}
+      ansible_user: root   
+

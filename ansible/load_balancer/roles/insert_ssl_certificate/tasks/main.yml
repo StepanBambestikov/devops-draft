@@ -1,0 +1,10 @@
+- name: Copy a SSH key
+  ansible.builtin.copy:
+    src: ~/.ssh/id_ed25519
+    dest: ~/.ssh/id_rsa
+    mode: "0644"
+- name: Copy a SSL certificate
+  ansible.builtin.copy:
+    src: ./certs/
+    dest: /etc/letsencrypt/live/{{ domain_name }}/
+    mode: "0644"

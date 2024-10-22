@@ -1,0 +1,14 @@
+- name: Install nginx
+  hosts: all
+  roles:
+    - set_nginx
+
+- name: Set origin
+  hosts: origin_host
+  roles:
+    - add_vhost_to_nginx
+
+- name: Set load balancer
+  hosts: balance_host
+  roles:
+    - add_load_balancer

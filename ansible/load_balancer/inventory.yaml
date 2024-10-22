@@ -1,0 +1,9 @@
+all:
+  hosts:
+    balance_host:
+      ansible_host: 104.248.9.31
+      ansible_user: root
+    origin_host:
+      ansible_host: 138.197.110.131
+      ansible_user: root   
+

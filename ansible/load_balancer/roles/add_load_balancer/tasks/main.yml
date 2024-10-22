@@ -1,0 +1,24 @@
+- name: Disable the default site
+  file:
+    path: "/etc/nginx/sites-enabled/default"
+    state: absent
+  notify:
+    - Reload Nginx
+- name: Remove the default configuration
+  file:
+    path: "/etc/nginx/conf.d/default.conf"
+    state: absent
+  notify:
+    - Reload Nginx
+- name: Add upstream group
+  ansible.builtin.template:
+    src: lb_nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    mode: "0644"
+- name: Upload LB virtual host config file
+  ansible.builtin.template:
+    src: vhost.conf.j2
+    dest: /etc/nginx/conf.d/{{  domain_name }}.conf
+    mode: "0644"
+  notify: Reload Nginx
+

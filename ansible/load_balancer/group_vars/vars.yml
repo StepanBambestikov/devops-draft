@@ -1,0 +1,8 @@
+---
+domain_name: s-namestnikov-at-g-nsu-ru.devops.rebrain.srwx.net
+letsencrypt_email: s.namestnikov@g.nsu.ru
+nginx_worker_connections: 768
+nginx_sendfile: on
+nginx_tcp_nodelay: on
+nginx_tcp_nopush: on
+origin_host: 138.197.110.131
